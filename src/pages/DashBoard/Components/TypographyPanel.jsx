@@ -28,9 +28,26 @@ export default function TypographyPanel({id,color,size,weight}) {
   
 
   const fontFamilies = [
-    'inter',
-    'poppins',
-    'montserrat'
+    "inter",
+"poppins",
+"outfit",
+"space",
+"dmSans",
+"manrope",
+"jakarta",
+"urbanist",
+"sora",
+"workSans",
+"playfair",
+"merriweather",
+"lora",
+"baskerville",
+"crimson",
+"bebas",
+"anton",
+"oswald",
+"raleway",
+"cabin"
   ];
 
   const colors = [

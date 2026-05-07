@@ -1,10 +1,10 @@
 import React, { useState , useEffect} from 'react';
 import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import GoogleAuthButton from './GoogleAuthButton';
-
+import { useSelector , useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router';
 import { Input } from '../../Components/ui/input';
-
+import { loginUser } from '../../store/actions/action';
 import { Toaster,toast } from 'sonner';
 
 
@@ -21,7 +21,11 @@ const LoginForm = ({ onToggleForm }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  
+
+  const navigate = useNavigate();
+
+  const {loading,success,error} = useSelector((state)=>state.userAuthReducer);
+  const dispatch = useDispatch();
   
   
 
@@ -97,12 +101,8 @@ const LoginForm = ({ onToggleForm }) => {
     // } catch (error) {
     //    console.log(error.message);
     // }
-     
-     if(success){
-       navigate("/home");
-     }
-    
-    
+     dispatch(loginUser(cred));
+    navigate("/profile");
   };
 
   const handleForgotPassword = () => {
@@ -112,11 +112,12 @@ const LoginForm = ({ onToggleForm }) => {
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {
-        window.location.href = "http://localhost:3000/auth/google"
+        window.location.href = "http://localhost:3000/api/googleAuth"
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="w-full">
@@ -126,11 +127,11 @@ const LoginForm = ({ onToggleForm }) => {
         <p className="text-gray-600">Sign in to your account to continue</p>
       </div>
 
-      {/* {error && (
+      {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error.message}
         </div>
-      )} */}
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email Input */}
@@ -185,7 +186,7 @@ const LoginForm = ({ onToggleForm }) => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
-              //disabled={loading}
+              disabled={loading}
             >
               {showPassword ? (
                 <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -209,7 +210,7 @@ const LoginForm = ({ onToggleForm }) => {
               checked={formData.rememberMe}
               onChange={handleInputChange}
               className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            //   disabled={loading}
+             disabled={loading}
             />
             <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
               Remember me
@@ -219,7 +220,7 @@ const LoginForm = ({ onToggleForm }) => {
             type="button"
             onClick={handleForgotPassword}
             className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
-            // disabled={loading}
+            disabled={loading}
           >
             Forgot password?
           </button>
@@ -228,18 +229,18 @@ const LoginForm = ({ onToggleForm }) => {
         {/* Login Button */}
         <button
           type="submit"
-          //disabled={loading}
+          disabled={loading}
           className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          {/* {loading ? (
+          {loading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
               <span>Signing in...</span>
             </>
           ) : (
             <span>Sign In</span>
-          )} */}
-          <span>Sign In</span>
+          )}
+          
         </button>
 
         {/* Divider */}
@@ -254,7 +255,7 @@ const LoginForm = ({ onToggleForm }) => {
 
         {/* Google Auth Button */}
         <GoogleAuthButton onClick={handleGoogleAuth} 
-         // isLoading={loading} 
+         isLoading={loading} 
          />
       </form>
 
@@ -266,7 +267,7 @@ const LoginForm = ({ onToggleForm }) => {
             type="button"
             onClick={onToggleForm}
             className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-            //disabled={loading}
+            disabled={loading}
           >
             Sign up
           </button>

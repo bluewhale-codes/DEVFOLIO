@@ -24,6 +24,31 @@ const SocialIcon = ({ href, icon: Icon }) => (
   </a>
 );
 
+const fontMap = {
+  inter: "Inter, sans-serif",
+  poppins: "Poppins, sans-serif",
+  outfit: "Outfit, sans-serif",
+  space: "Space Grotesk, sans-serif",
+  dmSans: "DM Sans, sans-serif",
+  manrope: "Manrope, sans-serif",
+  jakarta: "Plus Jakarta Sans, sans-serif",
+  urbanist: "Urbanist, sans-serif",
+  sora: "Sora, sans-serif",
+  workSans: "Work Sans, sans-serif",
+
+  playfair: "Playfair Display, serif",
+  merriweather: "Merriweather, serif",
+  lora: "Lora, serif",
+  baskerville: "Libre Baskerville, serif",
+  crimson: "Crimson Text, serif",
+
+  bebas: "Bebas Neue, sans-serif",
+  anton: "Anton, sans-serif",
+  oswald: "Oswald, sans-serif",
+  raleway: "Raleway, sans-serif",
+  cabin: "Cabin, sans-serif",
+};
+
 
 // The main reusable Hero Section component
 export const MinimalistHero = ({
@@ -164,7 +189,7 @@ export const MinimalistHero = ({
   return (
     <div
       className={cn(
-        'relative flex h-screen w-full flex-col items-center justify-between overflow-hidden bg-background font-poppins p-8  md:p-12',
+        'relative flex h-screen w-full flex-col items-center justify-between overflow-hidden bg-background p-8  md:p-12',
         className
       )}
     >
@@ -202,10 +227,12 @@ export const MinimalistHero = ({
 
              if(e.id==="name"){
               return <h1
-              style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`}}
+              style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`,
+                      fontFamily:fontMap[e.styles.fontFamily]
+            }}
               id='name'  onBlur={(e)=>setText(e.currentTarget.innerText)} onClick={(e)=>setID(e.currentTarget.id)} contentEditable
   suppressContentEditableWarning
-  className="font-extrabold text-foreground ">{text}</h1>
+  className="font-extrabold text-foreground text-center ">{text}</h1>
              }
           })}
           <a href={readMoreLink} className="mt-4 inline-block text-sm font-medium text-foreground underline decoration-from-font">
@@ -265,12 +292,16 @@ export const MinimalistHero = ({
                return    <h1
           id="heading"
           onClick={(e)=>setID(e.currentTarget.id)}
-           style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`}}
+           style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`
+                   , fontFamily:fontMap[e.styles.fontFamily]
+          
+          
+          }}
           contentEditable
           suppressContentEditableWarning
           onBlur={(e)=>setHeading(e.currentTarget.innerText)} 
          //className="text-7xl font-extrabold text-foreground md:text-8xl lg:text-9xl"
-         className="font-extrabold text-foreground"
+         className="font-extrabold text-foreground text-center"
          >
             {heading}
             

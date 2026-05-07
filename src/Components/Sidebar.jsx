@@ -24,10 +24,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
       <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gray-900 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">D</span>
-            </div>
-            <span className="font-semibold text-gray-900 text-sm">DEVFOLIO</span>
+             <img width={"120px"} src='https://res.cloudinary.com/dycjjaxsk/image/upload/v1778010708/ChatGPT_Image_May_6_2026_01_17_53_AM_1_pj2weu.png'/>
           </div>
         )}
         <button

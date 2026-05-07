@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, User, Loader2, Mic, Briefcase } from 'lucide-react';
 import GoogleAuthButton from './GoogleAuthButton';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../../store/actions/action';
 import { Input } from '../../Components/ui/input';
 
 const SignupForm = ({ onToggleForm }) => {
   const {loading,success,error} = useSelector((state)=>state.userAuthReducer);
 
- 
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
-    role: '' // 'client' or 'artist'
   });
   
   const [errors, setErrors] = useState({});
@@ -39,10 +40,7 @@ const SignupForm = ({ onToggleForm }) => {
   };
 
   const handleRoleSelect = (role) => {
-    setFormData(prev => ({ ...prev, role }));
-    if (errors.role) {
-      setErrors(prev => ({ ...prev, role: '' }));
-    }
+    console.log("Handle Role")
   };
 
   const handleSubmit = async (e) => {
@@ -77,9 +75,7 @@ const SignupForm = ({ onToggleForm }) => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
     
-    if (!formData.role) {
-      newErrors.role = 'Please select your account type';
-    }
+   
     
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -90,13 +86,13 @@ const SignupForm = ({ onToggleForm }) => {
       name:formData.fullName,
       email:formData.email,
       password:formData.password,
-      role:formData.role,
     }
   
     console.log(body);
 
     
     
+    dispatch(registerUser(body));
     
     
 
@@ -104,14 +100,10 @@ const SignupForm = ({ onToggleForm }) => {
   };
 
   const handleGoogleAuth = async () => {
-    if (!formData.role) {
-      setErrors({ role: 'Please select your account type before continuing with Google' });
-      return;
-    }
-    
+  
     setIsLoading(true);
     try {
-       window.location.href = "http://localhost:3000/auth/google"
+       window.location.href = "http://localhost:3000/api/googleAuth"
     } finally {
       setIsLoading(false);
     }
@@ -124,61 +116,14 @@ const SignupForm = ({ onToggleForm }) => {
         <p className="text-gray-600">Join our platform and get started today</p>
       </div>
 
-      {/* {error && (
+      {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error.message}
         </div>
-      )} */}
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Role Selection */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            I want to
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => handleRoleSelect('client')}
-              disabled={loading}
-              className={`p-2 border-2 rounded-lg transition-all duration-200 ${
-                formData.role === 'client'
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
-                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-              } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <div className="flex flex-col items-center gap-2">
-                <Briefcase className={`h-6 w-6 ${formData.role === 'client' ? 'text-blue-600' : 'text-gray-600'}`} />
-                <span className={`font-medium text-sm ${formData.role === 'client' ? 'text-blue-900' : 'text-gray-700'}`}>
-                  Hire Artists
-                </span>
-                <span className="text-xs text-gray-500">I need dubbing services</span>
-              </div>
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => handleRoleSelect('artist')}
-              disabled={loading}
-              className={`p-4 border-2 rounded-lg transition-all duration-200 ${
-                formData.role === 'artist'
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
-                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-              } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              <div className="flex flex-col items-center gap-2">
-                <Mic className={`h-6 w-6 ${formData.role === 'artist' ? 'text-blue-600' : 'text-gray-600'}`} />
-                <span className={`font-medium text-sm ${formData.role === 'artist' ? 'text-blue-900' : 'text-gray-700'}`}>
-                  Offer Services
-                </span>
-                <span className="text-xs text-gray-500">I'm a dubbing artist</span>
-              </div>
-            </button>
-          </div>
-          {errors.role && (
-            <p className="mt-2 text-sm text-red-600">{errors.role}</p>
-          )}
-        </div>
+        
 
         {/* Full Name Input */}
         <div>

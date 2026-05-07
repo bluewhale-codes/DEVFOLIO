@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-      Textdata:{}
+      Textdata:{},
+      Layoutdata:{}
 }
 
 const panelSlice = createSlice({
@@ -10,10 +11,13 @@ const panelSlice = createSlice({
      reducers:{
           setStyle:(state,action)=>{
                state.Textdata = action.payload;
+          },
+          setMyLayout:(state,action)=>{
+                state.Layoutdata = action.payload;
           }
      }
 
 })
 
-export const {setStyle} = panelSlice.actions
+export const {setStyle,setMyLayout} = panelSlice.actions
 export default panelSlice.reducer

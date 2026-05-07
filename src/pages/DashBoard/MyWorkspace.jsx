@@ -2,14 +2,13 @@ import { useState } from 'react';
 import Sidebar from '../../Components/Sidebar';
 import Section from '../../Components/Section';
 import Workspace from './Workspace';
-import { useNavigate } from 'react-router';
-export default function App() {
+
+export default function MyWorkspace() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [workspace , setWorkspace] = useState(false);
-  const navigate = useNavigate();
   
   const createNow = ()=>{
-      navigate("/workspace")
+      setWorkspace(true);
   }
 
   const newestCards = [
@@ -105,23 +104,7 @@ export default function App() {
           isCollapsed ? 'ml-16' : 'ml-56'
         }`}
       >
-       
-        <div className="h-14 border-b border-gray-100 flex items-center justify-between px-6">
-          <h1 className="text-lg font-semibold text-gray-900">Components</h1>
-          <div className="flex items-center gap-3">
-            <button onClick={createNow} className="px-4 py-2 bg-gray-900 text-white text-sm rounded-md font-medium hover:bg-gray-800 transition-colors">
-              Create New
-            </button>
-          </div>
-        </div>
-
-        
-        <div className="p-6 bg-gray-50 min-h-screen">
-          <Section title="Newest" cards={newestCards} />
-          <Section title="Popular" cards={popularCards} />
-          <Section title="Shaders" cards={shaderCards} />
-        </div>
-        
+        <Workspace/>
       </div>
     </div>
   );

@@ -39,39 +39,7 @@ const Auth = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Right Side - Authentication Form */}
-      <div className=" z-50 lg:w-1/2 flex items-center justify-center p-8 lg:p-12 ">
-        <div className="w-full max-w-md">
-          <motion.div
-            key={isLogin ? 'login' : 'signup'}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white rounded-2xl shadow-xl p-8 lg:p-10"
-          >
-            {isLogin ? (
-              <LoginForm onToggleForm={toggleForm} />
-            ) : (
-              <SignupForm onToggleForm={toggleForm} />
-            )}
-
-            {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <p className="text-xs text-center text-gray-500">
-                By continuing, you agree to our{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">
-                  Privacy Policy
-                </a>
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      
     </div>
   );
 };

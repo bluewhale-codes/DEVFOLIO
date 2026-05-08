@@ -3,7 +3,8 @@ import { ArrowDownRight } from "@aliimam/icons";
 import { Button } from "./Button";
 import FloatingToolbar from "../../pages/DashBoard/Components/FloatingToolbar";
 import TypographyPanel from "../../pages/DashBoard/Components/TypographyPanel";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { setElementID } from "../../store/slice/panelSlice";
   const Elements = [
   {
     id: "h1-1",
@@ -186,6 +187,7 @@ export function HeroSection04() {
     const [panel,setPanel] = useState(false);
 
     const [elements , setElements] = useState(Elements)
+    const dispatch = useDispatch();
 
     const {Textdata} = useSelector((state)=>state.panelSlice);
       
@@ -225,7 +227,7 @@ export function HeroSection04() {
   return (
     <section className="min-h-screen overflow-hidden relative py-20">
       <div className='relative'> 
-                  <FloatingToolbar  toggle={paneltoggle}/>
+                  {/* <FloatingToolbar  toggle={paneltoggle}/>
                   {panel && elements.map((e)=>{
                         if(e.id === selectedId){
                           return <TypographyPanel
@@ -238,7 +240,7 @@ export function HeroSection04() {
                         }         
                   })
                            
-                  }
+                  } */}
                    
                </div>
       <div className="mx-auto max-w-7xl relative z-20 px-6">
@@ -250,7 +252,7 @@ export function HeroSection04() {
               fontSize: `${getElement("p-1").styles.fontsize}px`,
               fontFamily: getElement("p-1").styles.fontFamily,
             }}
-            onClick={(e) => setID("p-1")}
+            onClick={(e) =>dispatch(setElementID("p-1"))}
             contentEditable
             suppressContentEditableWarning
             className="text-sm absolute -top-4 left-20 tracking-wider"
@@ -266,7 +268,7 @@ export function HeroSection04() {
               fontSize: `${getElement("h1-1").styles.fontsize}px`,
               fontFamily: getElement("h1-1").styles.fontFamily,
             }}
-            onClick={(e) => setID("h1-1")}
+            onClick={(e) =>dispatch(setElementID("h1-1"))}
             contentEditable
             suppressContentEditableWarning
             className="z-20  text-center tracking-[-7px]"
@@ -282,7 +284,7 @@ export function HeroSection04() {
               fontSize: `${getElement("p-2").styles.fontsize}px`,
               fontFamily: getElement("p-2").styles.fontFamily,
             }}
-            onClick={() => setID("p-2")}
+            onClick={() => dispatch(setElementID("p-2"))}
             contentEditable
             suppressContentEditableWarning
             className="hidden z-50 xl:block absolute -bottom-12 right-24"
@@ -297,7 +299,7 @@ export function HeroSection04() {
               fontSize: `${getElement("p-3").styles.fontsize}px`,
               fontFamily: getElement("p-3").styles.fontFamily,
             }}
-            onClick={() => setID("p-3")}
+            onClick={() => dispatch(setElementID("p-3"))}
             contentEditable
             suppressContentEditableWarning
             className="fixed z-50 absolute xl:hidden -bottom-12 left-24"
@@ -328,7 +330,7 @@ export function HeroSection04() {
             }}
             contentEditable
             suppressContentEditableWarning
-            onClick={() => setID("p-5")}
+            onClick={() => dispatch(setElementID("p-5"))}
             className="text-left p-2 rotate-180 [writing-mode:vertical-rl]"
           >
             {getElement("p-5").content}
@@ -350,7 +352,7 @@ export function HeroSection04() {
             }}
             contentEditable
             suppressContentEditableWarning
-            onClick={() => setID("p-5")}
+            onClick={() => dispatch(setElementID("p-5"))}
             className="text-left p-2 rotate-180 [writing-mode:vertical-rl]"
           >
             {getElement("p-5").content}
@@ -369,7 +371,7 @@ export function HeroSection04() {
             }}
             contentEditable
             suppressContentEditableWarning
-            onClick={() => setID("p-7")}
+            onClick={() => dispatch(setElementID("p-7"))}
             className="mx-auto max-w-2xl text-center"
           >
             {getElement("p-7").content}
@@ -413,7 +415,7 @@ export function HeroSection04() {
           }}
           contentEditable
           suppressContentEditableWarning
-          onClick={() => setID("p-8")}
+          onClick={() => dispatch(setElementID("p-8"))}
           className="text-lg tracking-wider"
         >
           {getElement("p-8").content}
@@ -429,7 +431,7 @@ export function HeroSection04() {
           }}
           contentEditable
           suppressContentEditableWarning
-          onClick={() => setID("h2-1")}
+          onClick={() => dispatch(setElementID("h2-1"))}
           className="uppercase"
         >
           {getElement("h2-1").content}

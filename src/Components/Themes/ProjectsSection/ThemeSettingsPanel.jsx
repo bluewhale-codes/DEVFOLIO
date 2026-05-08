@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Slider } from '../../ui/slider';
+import TemplateModal from './TemplateModal';
 import {
   Select,
   SelectContent,
@@ -9,28 +10,33 @@ import {
 } from '../../ui/select';
 import { Label } from '../../ui/label';
 import { Button } from '../../ui/Button';
+import { useSelector } from 'react-redux';
 import {
   Sparkles,
   Square,
   Box,
   Palette
 } from 'lucide-react';
+import { HeroSectionTemplates , ProjectSectionTemplates } from '../../../TemplatesRegistry/templateRegistry';
 
-const themePresets = [
-  { id: 'minimal', label: 'Minimal', icon: Square, bg: 'white' },
-  { id: 'glass', label: 'Glass', icon: Sparkles, bg: 'white' },
-  { id: 'dark-neon', label: 'Dark Neon', icon: Square, bg: 'dark' },
-  { id: 'scrapbook', label: 'Scrapbook', icon: Square, bg: 'beige' },
-  { id: 'brutalist', label: 'Brutalist', icon: Box, bg: 'white' },
-  { id: 'gradient', label: 'Gradient', icon: Palette, bg: 'purple' }
-];
 
 export default function ThemeSettingsPanel() {
   const [selectedTheme, setSelectedTheme] = useState('minimal');
+  const [theme,setTheme] = useState({});
   const [backgroundType, setBackgroundType] = useState('image');
   const [overlay, setOverlay] = useState([40]);
   const [attachment, setAttachment] = useState('cover');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  let template;
+  const {section}  = useSelector((state)=>state.panelSlice);
+
+  if(section.name==="Projects"){
+    template=ProjectSectionTemplates;
+  }
+  if(section.name==="Hero Section"){
+    template=HeroSectionTemplates;
+  }
   return (
     <div className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-sm p-6 overflow-y-auto">
       {/* Header */}
@@ -49,44 +55,36 @@ export default function ThemeSettingsPanel() {
           Theme Presets
         </Label>
         <div className="grid grid-cols-3 gap-3">
-          {themePresets.map((preset) => {
-            const Icon = preset.icon;
-            const isSelected = selectedTheme === preset.id;
+          {Object.entries(template).map(([key,value]) => {
+            
+            const isSelected = selectedTheme === value.id;
 
-            const getBackgroundClass = () => {
-              if (isSelected && preset.bg !== 'dark') return 'bg-purple-50';
-              if (preset.bg === 'dark') return 'bg-gray-900';
-              if (preset.bg === 'beige') return 'bg-amber-50';
-              if (preset.bg === 'purple') return 'bg-purple-100';
-              return 'bg-white';
-            };
-
+          
             return (
-              <button
-                key={preset.id}
-                onClick={() => setSelectedTheme(preset.id)}
+              <div
+                style={{
+                  backgroundImage: `url(${value.coverImage})`,
+                  width:"100px",
+                  height:"100px"
+                }}
+                key={value.id}
+                onClick={() => {
+                  setSelectedTheme(value.id)
+                   setIsModalOpen(true);
+                   setTheme(value);
+                }}
                 className={`
-                  flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all aspect-square
-                  ${getBackgroundClass()}
+                  cursor-pointer h-screen bg-cover bg-center flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all aspect-square
+                  
                   ${isSelected
                     ? 'border-[#6C63FF]'
                     : 'border-gray-200 hover:border-gray-300'
                   }
                 `}
               >
-                <Icon
-                  className={`
-                    w-7 h-7 mb-2
-                    ${preset.bg === 'dark' ? 'text-[#6C63FF]' : isSelected ? 'text-[#6C63FF]' : 'text-gray-600'}
-                  `}
-                />
-                <span className={`
-                  text-xs font-medium
-                  ${preset.bg === 'dark' ? 'text-white' : 'text-gray-700'}
-                `}>
-                  {preset.label}
-                </span>
-              </button>
+                
+              
+              </div>
             );
           })}
         </div>
@@ -174,6 +172,15 @@ export default function ThemeSettingsPanel() {
           </SelectContent>
         </Select>
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            onClick={() => setIsModalOpen(false)}
+          />
+          <TemplateModal template={theme} onClose={() => setIsModalOpen(false)} />
+        </div>
+      )}
     </div>
   );
 }

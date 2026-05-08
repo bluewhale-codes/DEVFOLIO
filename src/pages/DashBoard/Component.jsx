@@ -3,6 +3,7 @@ import Sidebar from '../../Components/Sidebar';
 import Section from '../../Components/Section';
 import Workspace from './Workspace';
 import { useNavigate } from 'react-router';
+import { HeroSectionTemplates,ProjectSectionTemplates } from '../../TemplatesRegistry/templateRegistry';
 export default function App() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [workspace , setWorkspace] = useState(false);
@@ -117,9 +118,9 @@ export default function App() {
 
         
         <div className="p-6 bg-gray-50 min-h-screen">
-          <Section title="Newest" cards={newestCards} />
-          <Section title="Popular" cards={popularCards} />
-          <Section title="Shaders" cards={shaderCards} />
+          <Section template={HeroSectionTemplates} title="Hero Themes" cards={newestCards} />
+          <Section template={ProjectSectionTemplates} title="Project Themes" cards={popularCards} />
+          
         </div>
         
       </div>

@@ -1,7 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import Card from './Card';
 
-export default function Section({ title, cards }) {
+
+export default function Section({template, title, cards }) {
+
+  console.log(template);
   return (
     <div className="mb-10">
       {/* Section Header */}
@@ -15,8 +18,9 @@ export default function Section({ title, cards }) {
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {cards.map((card, index) => (
-          <Card key={index} {...card} />
+       
+        {Object.entries(template).map(([key,vlaue])=>(
+            <Card key={key} value={vlaue} />
         ))}
       </div>
     </div>

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
-export default function Card({ title, gradient, image, theme = 'dark' }) {
+export default function Card(value) {
   const [isHovered, setIsHovered] = useState(false);
-
+  console.log("start")
+ console.log(value.value.label)
   return (
     <div
       className="relative w-full aspect-[4/3] rounded-lg overflow-hidden cursor-pointer transition-all duration-200 border border-gray-200 hover:border-gray-300"
@@ -14,15 +15,13 @@ export default function Card({ title, gradient, image, theme = 'dark' }) {
     >
       <div
         className="w-full h-full relative flex items-center justify-center p-6"
-        style={{
-          background: gradient || (theme === 'dark' ? '#000000' : '#ffffff'),
-        }}
+        
       >
-        {image && (
-          <img src={image} alt={title} className="w-full h-full object-cover absolute inset-0" />
+        {value?.value?.coverImage && (
+          <img src={value.value.coverImage}  className="w-full h-full object-cover absolute inset-0" />
         )}
-        <h3 className={`relative z-10 text-center font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-          {title}
+        <h3 className={`relative z-10 text-center font-medium'}`}>
+          {value.value.label}
         </h3>
       </div>
     </div>

@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { cn } from './utils';
 import TypographyPanel from '../../pages/DashBoard/Components/TypographyPanel';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch } from 'react-redux';
 import FloatingToolbar from '../../pages/DashBoard/Components/FloatingToolbar';
-
+import { setElementID } from '../../store/slice/panelSlice';
 // Helper component for navigation links
 const NavLink = ({ href, children }) => (
-
+  
   <a
     href={href}
     className="text-sm font-medium tracking-widest text-foreground/60 transition-colors hover:text-foreground"
@@ -69,9 +69,9 @@ export const MinimalistHero = ({
             {
               id: "heading",
               type: "h1",
-              content: "...heading",
+              content: "Vishal Shakya",
               styles: {
-                fontsize: 100,
+                fontsize: 50,
                 selectedColor: "#000000",
                 fontFamily: "Poppins",
                 fontWeight:900
@@ -80,7 +80,7 @@ export const MinimalistHero = ({
             {
               id: "name",
               type: "p",
-              content: "...name",
+              content: "Software Engineer",
               styles: {
                 fontsize: 30,
                 selectedColor: "#555",
@@ -89,13 +89,15 @@ export const MinimalistHero = ({
               },
             },
     ]);
+
+    const dispatch = useDispatch();
       
 
 
 
-     const [text , setText] = useState("..text");
-     const [heading,setHeading] = useState("..Heading");
-     const [size , setSize] = useState(100);
+     const [text , setText] = useState("Vishal Shakya");
+     const [heading,setHeading] = useState("Software Engineer");
+     const [size , setSize] = useState(50);
      const [color,setColor] = useState('#030303');
      const [weight,setWeight] = useState(900);
      const [elementId,setElementId] =useState("heading");
@@ -197,7 +199,7 @@ export const MinimalistHero = ({
       <div className='flex h-[40px]'>
          {/* <button onClick={save} className='px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium shadow-md hover:scale-105 transition-transform duration-200'>Save</button> */}
          <div className='relative'> 
-            <FloatingToolbar  toggle={paneltoggle}/>
+            {/* <FloatingToolbar  toggle={paneltoggle}/>
             {panel && elements.map((e)=>{
                   if(e.id === elementId){
                     return <TypographyPanel
@@ -210,7 +212,7 @@ export const MinimalistHero = ({
                   }         
             })
                      
-            }
+            } */}
              
          </div>
       </div>
@@ -230,7 +232,7 @@ export const MinimalistHero = ({
               style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`,
                       fontFamily:fontMap[e.styles.fontFamily]
             }}
-              id='name'  onBlur={(e)=>setText(e.currentTarget.innerText)} onClick={(e)=>setID(e.currentTarget.id)} contentEditable
+              id='name'  onBlur={(e)=>setText(e.currentTarget.innerText)} onClick={(e)=>dispatch(setElementID(e.currentTarget.id))} contentEditable
   suppressContentEditableWarning
   className="font-extrabold text-foreground text-center ">{text}</h1>
              }
@@ -273,10 +275,10 @@ export const MinimalistHero = ({
                 target.src = `https://placehold.co/400x600/eab308/ffffff?text=Image+Not+Found`;
                 }}
             />
-              {menu.visible && (
+              {/* {menu.visible && (
                     <TypographyPanel/>
                     
-                )}
+                )} */}
         </div>
         
 
@@ -291,7 +293,7 @@ export const MinimalistHero = ({
              if(e.id==="heading"){
                return    <h1
           id="heading"
-          onClick={(e)=>setID(e.currentTarget.id)}
+          onClick={(e)=>dispatch(setElementID(e.currentTarget.id))}
            style={{color:`${e.styles.selectedColor}`,fontWeight:`${e.styles.fontWeight}`,fontSize:`${e.styles.fontsize}px`
                    , fontFamily:fontMap[e.styles.fontFamily]
           

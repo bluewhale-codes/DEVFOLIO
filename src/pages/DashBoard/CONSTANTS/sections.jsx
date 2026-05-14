@@ -43,8 +43,27 @@ export const SECTIONS = [
        
 
     }},
-    
-    { id: "projects", name: "Projects", icon:<Code/>, enabled: true,features:{
+    { id: "About", name: "About Section", icon: <Sparkles/>, enabled: true,features:{
+
+       theme:{
+            icon:<Layout className="size-4 mr-2" />,
+            name:"About Themes",
+            content:<ThemeSettingsPanel/>
+       }
+       
+
+    }},
+    { id: "Skill", name: "Skill Section", icon: <Sparkles/>, enabled: true,features:{
+
+       theme:{
+            icon:<Layout className="size-4 mr-2" />,
+            name:"Skill Themes",
+            content:<ThemeSettingsPanel/>
+       }
+       
+
+    }},
+     { id: "projects", name: "Projects", icon:<Code/>, enabled: true,features:{
        layout:{
            icon:<Layout className="size-4 mr-2" />,
             name:"Layout",
@@ -62,5 +81,27 @@ export const SECTIONS = [
             content:<ThemeSettingsPanel/>
        },
     }},
+    { id: "Achievement", name: "Achievement Section", icon: <Sparkles/>, enabled: true,features:{
+
+       theme:{
+            icon:<Layout className="size-4 mr-2" />,
+            name:"Achievement Themes",
+            content:<ThemeSettingsPanel/>
+       }
+       
+
+    }},
+    { id: "Contact", name: "Contact Section", icon: <Sparkles/>, enabled: true,features:{
+
+       theme:{
+            icon:<Layout className="size-4 mr-2" />,
+            name:"Contact Themes",
+            content:<ThemeSettingsPanel/>
+       }
+       
+
+    }},
+    
+    
    ,
   ]

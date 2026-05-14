@@ -1,0 +1,18 @@
+import React from 'react'
+
+const DarkRadialGlow = ({MainComponent}) => {
+  return (
+    <div className="min-h-screen w-full bg-[#020617] relative">
+  {/* Dark Radial Glow Background */}
+  <div
+    className="absolute inset-0 z-0"
+    style={{
+      backgroundImage: `radial-gradient(circle 500px at 50% 200px, #3e3e3e, transparent)`,
+    }}
+  />
+     {MainComponent}
+</div>
+  )
+}
+
+export default DarkRadialGlow

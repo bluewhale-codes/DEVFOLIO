@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter,createRoutesFromElements,Route,RouterProvider } from 'react-router'
 import { Provider } from 'react-redux'
 import store from './store/store.js'
-import './App.css'
 
+import About01 from "./Components/Themes/AboutSection/Theme1/About01.jsx"
 import MainLayout from './Components/Layout/MainLayout.jsx'
 import Home from './pages/Home/Home.jsx'
 import Component from './pages/DashBoard/Component.jsx'
@@ -16,6 +16,11 @@ import WowTheme from './Components/Themes/ProjectsSection/Theme2/WowTheme.jsx'
 import MyWorkspace from "./pages/DashBoard/MyWorkspace.jsx"
 import AuthPage from './pages/Auth/Authpage.jsx'
 import DeveloperDashboard from './pages/DeveloperProfile/DeveloperDashboard.jsx'
+import Skill01 from './Components/Themes/SkillSection/Skill01.jsx'
+import Test from "./Test.jsx"
+import Test2 from './Test2.jsx'
+import Preview from './pages/Preview/Preview.jsx'
+import ShadowControlPanel from './pages/DashBoard/Components/ShadowControlPanel.jsx'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -31,6 +36,8 @@ const router = createBrowserRouter(createRoutesFromElements(
         <Route path='/workspace' element={<MyWorkspace/>} />
         <Route path='/profile' element={<DeveloperDashboard/>}/>
       <Route path='/try-component' element={<Component/>}/>
+      <Route path='/preview' element={<Preview/>}/>
+      <Route path='/test' element={<Test/>}/>
       
   </>
 ))

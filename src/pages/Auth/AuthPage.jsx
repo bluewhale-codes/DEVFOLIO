@@ -181,7 +181,7 @@ export default function AuthPage() {
       <footer className="bg-transparent border-t border-gray-200">
         <div className="px-8 py-5">
           <div className="flex items-center justify-center gap-3 text-sm text-gray-600">
-            <h1 className='font-bold'>© 2024</h1>
+            <h1 className='font-bold'>© 2026</h1>
             <img width={"100px"} src='https://res.cloudinary.com/dycjjaxsk/image/upload/v1778010708/ChatGPT_Image_May_6_2026_01_17_53_AM_1_pj2weu.png'/>
           </div>
         </div>

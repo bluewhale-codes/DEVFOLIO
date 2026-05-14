@@ -1,0 +1,709 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { 
+  Trophy, 
+  Star, 
+  Code2, 
+  Users, 
+  ArrowUpRight, 
+  ChevronDown,
+  Sparkles,
+  Plus,
+  Pencil,
+  X,
+  Save,
+  Trash2
+} from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Color constants
+const COLORS = {
+  purple: '#7B4DFF',
+  lime: '#D9FF3F',
+  black: '#1a1a1a',
+  white: '#ffffff',
+  gray: '#f5f5f5',
+  darkGray: '#333333'
+};
+
+// Achievement data
+const initialAchievements = [
+  {
+    id: 1,
+    title: "GDSC Lead – 2023",
+    description: "Led and managed Google Developer Student Clubs chapter successfully.",
+    tag: "Certificate",
+    date: "May 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-purple-100 text-purple-700"
+  },
+  {
+    id: 2,
+    title: "India Hacks 2023 Winner",
+    description: "Won 1st place in India's biggest open innovation hackathon.",
+    tag: "Hackathon",
+    date: "Sep 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-lime-100 text-lime-800"
+  },
+  {
+    id: 3,
+    title: "IEEE Recognition",
+    description: "Recognized for outstanding leadership and contributions in IEEE.",
+    tag: "Recognition",
+    date: "Jan 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-orange-100 text-orange-700"
+  },
+  {
+    id: 4,
+    title: "DevFest 2023 Speaker",
+    description: "Spoke about building scalable web apps at DevFest 2023.",
+    tag: "Event",
+    date: "Dec 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-blue-100 text-blue-700"
+  },
+  {
+    id: 5,
+    title: "CodeWars 2.0 Winner",
+    description: "Secured 1st position in CodeWars 2.0 by Coding Ninjas.",
+    tag: "Hackathon",
+    date: "Aug 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-lime-100 text-lime-800"
+  },
+  {
+    id: 6,
+    title: "Microsoft Learn Challenge",
+    description: "Completed Microsoft Learn Student Ambassador Challenge.",
+    tag: "Certificate",
+    date: "Jul 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-purple-100 text-purple-700"
+  },
+  {
+    id: 7,
+    title: "Smart India Hackathon Finalist",
+    description: "Reached the final round of Smart India Hackathon 2023.",
+    tag: "Hackathon",
+    date: "Mar 2023",
+    image: "/api/placeholder/400/280",
+    color: "bg-lime-100 text-lime-800"
+  },
+  {
+    id: 8,
+    title: "Udemy Course Completion",
+    description: "Completed The Complete Web Developer Bootcamp course.",
+    tag: "Certificate",
+    date: "Nov 2022",
+    image: "/api/placeholder/400/280",
+    color: "bg-purple-100 text-purple-700"
+  }
+];
+
+const filters = ["All", "Awards", "Certificates", "Hackathons", "Events", "Recognitions"];
+
+const stats = [
+  { number: "12+", label: "Awards", icon: Trophy, color: "bg-yellow-50" },
+  { number: "25+", label: "Recognitions", icon: Star, color: "bg-purple-50" },
+  { number: "8+", label: "Hackathons", icon: Code2, color: "bg-lime-50" },
+  { number: "15+", label: "Events", icon: Users, color: "bg-blue-50" }
+];
+
+const tagColors = {
+  Certificate: "bg-purple-100 text-purple-700",
+  Hackathon: "bg-lime-100 text-lime-800",
+  Recognition: "bg-orange-100 text-orange-700",
+  Event: "bg-blue-100 text-blue-700",
+  Award: "bg-yellow-100 text-yellow-800"
+};
+
+const tagOptions = ['Certificate', 'Hackathon', 'Recognition', 'Event', 'Award'];
+
+// Decorative SVG Components
+const Starburst = ({ className = "" }) => (
+  <svg className={className} viewBox="0 0 100 100" fill="none">
+    <path d="M50 0L53 35L65 5L58 38L80 15L62 42L95 30L65 50L95 70L62 58L80 85L58 62L65 95L53 65L50 100L47 65L35 95L42 62L20 85L38 58L5 70L35 50L5 30L38 42L20 15L42 38L35 5L47 35Z" 
+          fill="currentColor"/>
+  </svg>
+);
+
+const HandDrawnArrow = ({ className = "" }) => (
+  <svg className={className} viewBox="0 0 60 40" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M5 20 Q 20 5, 40 20 Q 20 35, 5 20" />
+    <path d="M35 15 L 45 20 L 35 25" />
+  </svg>
+);
+
+const TornPaperEdge = ({ className = "" }) => (
+  <svg className={className} viewBox="0 0 200 20" preserveAspectRatio="none">
+    <path d="M0,10 Q5,5 10,10 Q15,15 20,10 Q25,5 30,10 Q35,15 40,10 Q45,5 50,10 Q55,15 60,10 Q65,5 70,10 Q75,15 80,10 Q85,5 90,10 Q95,15 100,10 Q105,5 110,10 Q115,15 120,10 Q125,5 130,10 Q135,15 140,10 Q145,5 150,10 Q155,15 160,10 Q165,5 170,10 Q175,15 180,10 Q185,5 190,10 Q195,15 200,10 L200,20 L0,20Z" 
+          fill="currentColor"/>
+  </svg>
+);
+
+const GridPattern = ({ className = "" }) => (
+  <svg className={className} viewBox="0 0 100 100" width="100%" height="100%">
+    <defs>
+      <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3"/>
+      </pattern>
+    </defs>
+    <rect width="100" height="100" fill="url(#grid)" />
+  </svg>
+);
+
+// Trophy Illustration Component - Compact
+const TrophyIllustration = () => (
+  <div className="relative w-full h-full min-h-[200px]">
+    {/* Grid Background */}
+    <div className="absolute inset-0 text-gray-300">
+      <GridPattern />
+    </div>
+    
+    {/* Purple Circle */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 opacity-90" />
+    
+    {/* Trophy Image Placeholder */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-36 sm:w-36 sm:h-44">
+      <img src='https://res.cloudinary.com/dycjjaxsk/image/upload/v1778685267/ChatGPT_Image_May_13_2026_08_37_07_PM_1_incolw.png'/>
+    </div>
+    
+    {/* Sticky Note */}
+    <motion.div 
+      initial={{ rotate: -5, scale: 0.8 }}
+      animate={{ rotate: -3, scale: 1 }}
+      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      className="absolute bottom-4 left-2 bg-[#D9FF3F] px-3 py-2 shadow-lg transform -rotate-6 z-10"
+      style={{ clipPath: "polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%)" }}
+    >
+      <p className="text-black font-bold text-xs">Keep Building</p>
+      <div className="flex gap-0.5 mt-0.5">
+        <ArrowUpRight className="w-2.5 h-2.5 text-black" />
+        <ArrowUpRight className="w-2.5 h-2.5 text-black" />
+      </div>
+    </motion.div>
+    
+    {/* Torn Paper Edge */}
+    <div className="absolute bottom-0 left-0 right-0 text-white">
+      <TornPaperEdge className="w-full h-4" />
+    </div>
+    
+    {/* Decorative Elements */}
+    <motion.div 
+      animate={{ rotate: 360 }}
+      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      className="absolute top-2 right-4 text-gray-800 w-6 h-6"
+    >
+      <Starburst />
+    </motion.div>
+    
+    <div className="absolute bottom-12 right-3 text-gray-400 w-5 h-3 transform rotate-12">
+      <HandDrawnArrow />
+    </div>
+    
+    {/* Sketch marks */}
+    <svg className="absolute top-4 left-4 w-8 h-8 text-gray-300" viewBox="0 0 50 50">
+      <path d="M10 25 Q 25 10, 40 25 Q 25 40, 10 25" fill="none" stroke="currentColor" strokeWidth="1" />
+      <circle cx="25" cy="25" r="15" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="3 3" />
+    </svg>
+  </div>
+);
+
+// Achievement Modal - Edit/Add Form
+const AchievementModal = ({ isOpen, onClose, onSave, onDelete, achievement, isNew = false }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    tag: 'Certificate',
+    date: '',
+    image: '/api/placeholder/400/280',
+    ...achievement
+  });
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0,0,0,0.4)' }}
+        onClick={onClose}
+      >
+        <motion.div 
+          initial={{ scale: 0.9, y: 20 }}
+          animate={{ scale: 1, y: 0 }}
+          exit={{ scale: 0.9, y: 20 }}
+          onClick={e => e.stopPropagation()}
+          className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        >
+          {/* Modal Header */}
+          <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900">
+              {isNew ? '✨ Add Achievement' : '✏️ Edit Achievement'}
+            </h2>
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+          
+          {/* Form */}
+          <div className="p-5 space-y-4">
+            {/* Image URL */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Image URL</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={formData.image}
+                  onChange={e => setFormData({...formData, image: e.target.value})}
+                  placeholder="https://... or /api/placeholder/400/280"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none text-sm"
+                />
+                <div className="w-12 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                  {formData.image ? (
+                    <img 
+                      src={formData.image} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                      onError={e => { e.target.style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200" />
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Title</label>
+              <input 
+                type="text" 
+                value={formData.title}
+                onChange={e => setFormData({...formData, title: e.target.value})}
+                placeholder="e.g., GDSC Lead – 2023"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none text-sm"
+              />
+            </div>
+            
+            {/* Tag & Date Row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Category</label>
+                <select 
+                  value={formData.tag}
+                  onChange={e => setFormData({...formData, tag: e.target.value})}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none text-sm bg-white"
+                >
+                  {tagOptions.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
+                <input 
+                  type="text" 
+                  value={formData.date}
+                  onChange={e => setFormData({...formData, date: e.target.value})}
+                  placeholder="e.g., May 2023"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none text-sm"
+                />
+              </div>
+            </div>
+            
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
+              <textarea 
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
+                placeholder="Brief description of the achievement..."
+                rows={3}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-100 outline-none text-sm resize-none"
+              />
+            </div>
+          </div>
+          
+          {/* Actions */}
+          <div className="flex items-center justify-between p-5 border-t border-gray-100">
+            {!isNew && (
+              <button 
+                onClick={() => { onDelete(achievement.id); onClose(); }}
+                className="flex items-center gap-2 px-4 py-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors text-sm font-semibold"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            )}
+            <div className="flex gap-2 ml-auto">
+              <button 
+                onClick={onClose}
+                className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors text-sm font-semibold"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => { onSave(formData); onClose(); }}
+                className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white hover:bg-purple-700 rounded-xl transition-colors text-sm font-semibold shadow-lg shadow-purple-200"
+              >
+                <Save className="w-4 h-4" />
+                {isNew ? 'Add' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// Main Achievement Card with Edit Button
+const AchievementCard = ({ achievement, index, onEdit }) => {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-30px" }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      whileHover={{ y: -4 }}
+      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 relative"
+    >
+      {/* Edit Button - appears on hover (desktop), always visible (mobile) */}
+      <button 
+        onClick={() => onEdit(achievement)}
+        className="absolute top-3 right-3 z-20 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md hover:bg-purple-50 hover:text-purple-600 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-1 sm:group-hover:translate-y-0"
+      >
+        <Pencil className="w-3.5 h-3.5" />
+      </button>
+      
+      {/* Image Container */}
+      <div className="relative h-40 sm:h-44 overflow-hidden bg-gray-100">
+        <img 
+          src={achievement.image} 
+          alt={achievement.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {/* Subtle overlay on hover */}
+        <div className="absolute inset-0 bg-purple-900/0 group-hover:bg-purple-900/10 transition-colors duration-300" />
+        
+        {/* Tag overlay on image */}
+        <div className="absolute top-3 left-3">
+          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${tagColors[achievement.tag] || tagColors.Certificate} backdrop-blur-sm bg-opacity-90`}>
+            {achievement.tag}
+          </span>
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className="p-4">
+        {/* Meta row */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-gray-400 text-xs font-medium">{achievement.date}</span>
+        </div>
+        
+        {/* Title */}
+        <h3 className="text-base font-bold text-gray-900 mb-1.5 leading-tight group-hover:text-[#7B4DFF] transition-colors line-clamp-1">
+          {achievement.title}
+        </h3>
+        
+        {/* Description */}
+        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">
+          {achievement.description}
+        </p>
+      </div>
+    </motion.div>
+  );
+};
+
+// Main Component
+const AchievementsGallary = () => {
+  const [achievements, setAchievements] = useState(initialAchievements);
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [sortOrder, setSortOrder] = useState("Latest First");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingAchievement, setEditingAchievement] = useState(null);
+  const [isNewAchievement, setIsNewAchievement] = useState(false);
+  
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const statsRef = useRef(null);
+
+  useEffect(() => {
+    // GSAP Animations
+    const ctx = gsap.context(() => {
+      // Heading animation
+      gsap.from(headingRef.current, {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 85%",
+        }
+      });
+
+      // Stats animation
+      if (statsRef.current) {
+        gsap.from(statsRef.current.children, {
+          y: 40,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: "top 85%",
+          }
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleEdit = (achievement) => {
+    setEditingAchievement(achievement);
+    setIsNewAchievement(false);
+    setModalOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingAchievement(null);
+    setIsNewAchievement(true);
+    setModalOpen(true);
+  };
+
+  const handleSave = (formData) => {
+    if (isNewAchievement) {
+      const newId = Math.max(...achievements.map(a => a.id), 0) + 1;
+      setAchievements([...achievements, { ...formData, id: newId }]);
+    } else {
+      setAchievements(achievements.map(a => a.id === formData.id ? formData : a));
+    }
+  };
+
+  const handleDelete = (id) => {
+    setAchievements(achievements.filter(a => a.id !== id));
+  };
+
+  const filteredAchievements = activeFilter === "All" 
+    ? achievements 
+    : achievements.filter(a => {
+        if (activeFilter === "Awards") return a.tag === "Award" || a.tag === "Recognition";
+        if (activeFilter === "Certificates") return a.tag === "Certificate";
+        if (activeFilter === "Hackathons") return a.tag === "Hackathon";
+        if (activeFilter === "Events") return a.tag === "Event";
+        if (activeFilter === "Recognitions") return a.tag === "Recognition";
+        return true;
+      });
+
+  return (
+    <section ref={sectionRef} className="w-full min-h-screen py-8 sm:py-12 px-3 sm:px-4 lg:px-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-10 right-10 w-20 h-20 text-gray-200 opacity-40">
+        <Starburst />
+      </div>
+      <div className="absolute bottom-40 left-10 w-16 h-16 text-gray-200 opacity-20 rotate-12">
+        <svg viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 5" />
+        </svg>
+      </div>
+
+      <div className="max-w-6xl mx-auto">
+        
+        {/* COMPACT HEADER AREA */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+          
+          {/* Left: Heading */}
+          <div ref={headingRef} className="lg:col-span-5">
+            {/* Label */}
+            <div className="flex items-center gap-1.5 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#7B4DFF]" />
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#7B4DFF] uppercase">
+                Achievements
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#7B4DFF]" />
+            </div>
+            
+            {/* Main Heading */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 leading-[0.9] mb-4">
+              Milestones<br />
+              That <span className="relative inline-block">
+                <span className="text-[#7B4DFF]">Matter.</span>
+                {/* Lime underline */}
+                <svg className="absolute -bottom-1 left-0 w-full h-3" viewBox="0 0 200 12" preserveAspectRatio="none">
+                  <path d="M5 8 Q 50 2, 100 6 Q 150 10, 195 4" 
+                        stroke="#D9FF3F" 
+                        strokeWidth="5" 
+                        strokeLinecap="round"
+                        fill="none"/>
+                </svg>
+              </span>
+            </h1>
+            
+            {/* Description */}
+            <p className="text-gray-500 text-sm max-w-sm mb-4 leading-relaxed">
+              Highlights of my journey — awards, recognitions, and achievements that shaped who I am.
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-gray-900 text-white px-4 py-2 rounded-full font-semibold text-xs flex items-center gap-1.5 hover:bg-gray-800 transition-colors shadow-md"
+              >
+                View All
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </motion.button>
+              
+              {/* ADD NEW BUTTON */}
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAddNew}
+                className="flex items-center gap-1.5 px-4 py-2 bg-purple-600 text-white rounded-full font-semibold text-xs hover:bg-purple-700 transition-colors shadow-md shadow-purple-200"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add New
+              </motion.button>
+            </div>
+          </div>
+          
+          {/* Center: Stats */}
+          <div ref={statsRef} className="lg:col-span-4 flex items-center">
+            <div className="flex items-center justify-center gap-1 w-full flex-wrap sm:flex-nowrap">
+              {stats.map((stat, index) => (
+                <React.Fragment key={stat.label}>
+                  <motion.div 
+                    whileHover={{ scale: 1.05 }}
+                    className="flex flex-col items-center px-2 py-1"
+                  >
+                    {/* Icon Badge */}
+                    <div className={`w-9 h-9 ${stat.color} rounded-full flex items-center justify-center mb-1`}>
+                      <stat.icon className="w-4 h-4 text-gray-700" />
+                    </div>
+                    {/* Number */}
+                    <span className="text-2xl font-black text-gray-900 leading-none">
+                      {stat.number}
+                    </span>
+                    {/* Label */}
+                    <span className="text-[10px] font-medium text-gray-500 mt-0.5">
+                      {stat.label}
+                    </span>
+                  </motion.div>
+                  
+                  {/* Separator */}
+                  {index < stats.length - 1 && (
+                    <div className="hidden sm:block w-px h-10 bg-gray-200 mx-1" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+          
+          {/* Right: Trophy Illustration */}
+          <div className="lg:col-span-3 hidden sm:block relative h-64 lg:h-auto min-h-[200px]">
+            <TrophyIllustration />
+          </div>
+        </div>
+        
+        {/* FILTER BAR - Compact */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-1.5">
+            {filters.map((filter) => (
+              <motion.button
+                key={filter}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
+                  activeFilter === filter
+                    ? "bg-gray-900 text-white shadow-md"
+                    : "bg-white text-gray-500 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {filter}
+              </motion.button>
+            ))}
+          </div>
+          
+          {/* Sort Dropdown */}
+          <div className="relative">
+            <button className="flex items-center gap-1.5 bg-white border border-gray-200 px-3 py-1.5 rounded-full text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+              {sortOrder}
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+        
+        {/* ACHIEVEMENT GRID - Responsive */}
+        <motion.div 
+          layout
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredAchievements.map((achievement, index) => (
+              <AchievementCard 
+                key={achievement.id} 
+                achievement={achievement} 
+                index={index}
+                onEdit={handleEdit}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
+        
+        {/* Empty State */}
+        {filteredAchievements.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-gray-500 text-sm">No achievements found in this category.</p>
+            <button 
+              onClick={handleAddNew} 
+              className="mt-3 text-purple-600 text-sm font-semibold hover:underline"
+            >
+              Add your first achievement
+            </button>
+          </div>
+        )}
+        
+        {/* Bottom Decorative Element */}
+        <div className="mt-10 flex justify-center">
+          <div className="flex items-center gap-2 text-gray-300">
+            <div className="w-8 h-px bg-gray-300" />
+            <Sparkles className="w-4 h-4" />
+            <div className="w-8 h-px bg-gray-300" />
+          </div>
+        </div>
+      </div>
+      
+      {/* Edit/Add Modal */}
+      <AchievementModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        achievement={editingAchievement}
+        isNew={isNewAchievement}
+      />
+    </section>
+  );
+};
+
+export default AchievementsGallary;

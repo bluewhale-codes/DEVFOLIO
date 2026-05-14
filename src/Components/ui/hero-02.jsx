@@ -5,6 +5,7 @@ import FloatingToolbar from "../../pages/DashBoard/Components/FloatingToolbar";
 import TypographyPanel from "../../pages/DashBoard/Components/TypographyPanel";
 import { useSelector,useDispatch } from "react-redux";
 import { setElementID } from "../../store/slice/panelSlice";
+import { animations } from "../animated-headings/animation";
   const Elements = [
   {
     id: "h1-1",
@@ -15,6 +16,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 900,
+      animation:"SlideReveal"
     },
   },
 
@@ -27,6 +29,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 500,
+      animation:"SlideReveal"
     },
   },
 
@@ -39,6 +42,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 300,
+      animation:"SlideReveal"
     },
   },
 
@@ -51,6 +55,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 300,
+      animation:"SlideReveal"
     },
   },
 
@@ -63,6 +68,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 600,
+      animation:"SlideReveal"
     },
   },
 
@@ -75,6 +81,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 500,
+      animation:"SlideReveal"
     },
   },
 
@@ -87,6 +94,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 500,
+      animation:"SlideReveal"
     },
   },
 
@@ -100,6 +108,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "monospace",
       fontWeight: 500,
+      animation:"SlideReveal"
     },
   },
 
@@ -112,6 +121,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 500,
+      animation:"SlideReveal"
     },
   },
 
@@ -124,6 +134,7 @@ import { setElementID } from "../../store/slice/panelSlice";
       selectedColor: "#000000",
       fontFamily: "Poppins",
       fontWeight: 700,
+      animation:"SlideReveal"
     },
   },
 
@@ -183,7 +194,7 @@ import { setElementID } from "../../store/slice/panelSlice";
   },
 ];
 export function HeroSection04() {
-  const [selectedId, setID] = useState(null);
+    const [selectedId, setID] = useState(null);
     const [panel,setPanel] = useState(false);
 
     const [elements , setElements] = useState(Elements)
@@ -225,7 +236,9 @@ export function HeroSection04() {
            
        },[Textdata])
   return (
-    <section className="min-h-screen overflow-hidden relative py-20">
+    <section style={{
+        
+    }} className="min-h-screen overflow-hidden relative py-20">
       <div className='relative'> 
                   {/* <FloatingToolbar  toggle={paneltoggle}/>
                   {panel && elements.map((e)=>{
@@ -256,8 +269,13 @@ export function HeroSection04() {
             contentEditable
             suppressContentEditableWarning
             className="text-sm absolute -top-4 left-20 tracking-wider"
-          >
-            {getElement("p-1").content}
+          >{animations.map((animation)=>{
+                              const text = getElement("p-1").content
+                              return <>
+                                   {animation.id === getElement("p-1").styles.animation && <animation.content text={text}/>}
+              </>
+              })}
+                
           </p>
 
            {/* h1-1 */}

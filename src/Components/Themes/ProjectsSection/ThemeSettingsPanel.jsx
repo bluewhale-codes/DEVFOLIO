@@ -17,9 +17,9 @@ import {
   Box,
   Palette
 } from 'lucide-react';
-import { HeroSectionTemplates , ProjectSectionTemplates } from '../../../TemplatesRegistry/templateRegistry';
-
-
+import { HeroSectionTemplates , ProjectSectionTemplates , AboutSectionTemplates, SkillSectionTemplates, AchievementSectionTemplates, ContactSectionTemplates } from '../../../TemplatesRegistry/templateRegistry';
+import HoverCard from '../../../pages/DashBoard/Background/Component/HoverCard';
+import {gradientBackground} from '../../../pages/DashBoard/Background/backgroundGradient';
 export default function ThemeSettingsPanel() {
   const [selectedTheme, setSelectedTheme] = useState('minimal');
   const [theme,setTheme] = useState({});
@@ -27,6 +27,8 @@ export default function ThemeSettingsPanel() {
   const [overlay, setOverlay] = useState([40]);
   const [attachment, setAttachment] = useState('cover');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const cards = Array.from({ length: 20 });
 
   let template;
   const {section}  = useSelector((state)=>state.panelSlice);
@@ -36,6 +38,18 @@ export default function ThemeSettingsPanel() {
   }
   if(section.name==="Hero Section"){
     template=HeroSectionTemplates;
+  }
+  if(section.name==="About Section"){
+    template=AboutSectionTemplates;
+  }
+  if(section.name==="Skill Section"){
+     template=SkillSectionTemplates
+  }
+  if(section.name==="Achievement Section"){
+     template=AchievementSectionTemplates
+  }
+  if(section.name==="Contact Section"){
+     template=ContactSectionTemplates
   }
   return (
     <div className="w-full max-w-sm mx-auto bg-white rounded-2xl shadow-sm p-6 overflow-y-auto">
@@ -97,13 +111,13 @@ export default function ThemeSettingsPanel() {
         </Label>
 
         {/* Segmented Control */}
-        <div className="inline-flex bg-gray-50 rounded-lg p-1 border border-gray-200 mb-4">
+        <div className="inline-flex bg-gray-50 rounded-lg p-1 border border-gray-500 mb-4">
           {['color', 'gradient', 'image'].map((type) => (
             <button
               key={type}
               onClick={() => setBackgroundType(type)}
               className={`
-                px-4 py-1.5 rounded-md text-xs font-medium transition-all capitalize
+                cursor-pointer px-4 py-1.5 rounded-md text-xs font-medium transition-all capitalize
                 ${backgroundType === type
                   ? 'bg-white text-[#6C63FF] shadow-sm border border-[#6C63FF]'
                   : 'text-gray-600 hover:text-gray-900'
@@ -114,6 +128,22 @@ export default function ThemeSettingsPanel() {
             </button>
           ))}
         </div>
+
+
+        {backgroundType === "gradient" && (
+
+
+        <div className="h-[300px] overflow-y-auto rounded-2xl p-4 ">
+        
+                {/* Cards Wrapper */}
+                <div className="flex flex-wrap gap-4">
+                  {gradientBackground.map((item, index) => (
+                    <HoverCard background={item}/>
+                  ))}
+                </div>
+       </div>
+
+        )}
 
         {/* Image Preview */}
         {backgroundType === 'image' && (

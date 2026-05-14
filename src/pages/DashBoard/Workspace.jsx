@@ -34,16 +34,29 @@ import {
 import EditPanel from "./Components/EditPanel";
 import EditorWorkspace from "./Components/EditorWorkspace";
 import SectionsPanel from "./Components/SectionsPanel";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch } from "react-redux";
 import { setSection } from "../../store/slice/panelSlice";
 import FloatingToolbar from "./Components/FloatingToolbar";
 import TypographyPanel from "./Components/TypographyPanel";
+import {TypographyToolbar} from "./Components/TypographyToolbar";
+import { saveChanges } from "../../store/slice/panelSlice";
+import { useNavigate } from "react-router";
+import SelectTextAnimation from "./Components/SelectTextAnimation";
+
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription
+} from "../../Components/ui/dialog"
 
 export default function Workspace() {
   
   const [editingSection, setEditingSection] = useState(false);
-  const {editMode,section,elementId} = useSelector((state)=>state.panelSlice)
- 
+  const {editMode,section,elementId,theme} = useSelector((state)=>state.panelSlice)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const onclick = ()=>{
       setEditingSection(true);
   }
@@ -62,6 +75,12 @@ export default function Workspace() {
           setPanel(!panel);
      }
 
+  const saveThemeChanges = () =>{
+
+       const id = section.id;
+       dispatch(saveChanges({id,theme}))
+  }
+
   return (
     <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       {/* Top Header */}
@@ -72,13 +91,19 @@ export default function Workspace() {
           
         </div>
         <div className="flex items-center gap-3">
+              <div>
+                 <TypographyToolbar/>
+              </div>
+              
+              
+            
           <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
              <div >
               <FloatingToolbar toggle={paneltoggle} />
               {panel && <TypographyPanel  id={elementId} />}
             </div>
           </div>
-          <Button variant="outline" className="gap-2">
+          <Button onClick={()=>navigate("/preview")}variant="outline" className="cursor-pointer gap-2">
             <Eye className="size-4" />
             Preview
           </Button>
@@ -86,7 +111,7 @@ export default function Workspace() {
             <Share2 className="size-4" />
             Share
           </Button>
-          <Button className="gap-2 bg-purple-600 hover:bg-purple-700">
+          <Button onClick={()=>saveThemeChanges()} className="cursor-pointer gap-2 bg-purple-600 hover:bg-purple-700">
             <Save className="size-4" />
             Save Changes
           </Button>

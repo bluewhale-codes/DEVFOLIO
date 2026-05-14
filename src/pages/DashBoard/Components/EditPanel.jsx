@@ -40,7 +40,7 @@ const EditPanel = () => {
   const dispatch = useDispatch();
   const {features} = useSelector((state)=>state.panelSlice.section);
   
-  console.log(features);
+  console.log(Object.entries(features)[0][0]);
   return (
 
     <div className="flex flex-col h-full">
@@ -56,7 +56,7 @@ const EditPanel = () => {
        
       </div>
     <div className="w-96 bg-white border-r border-slate-200 flex flex-col">
-          <Tabs defaultValue="sections" className="flex-1 flex flex-col">
+          <Tabs defaultValue={Object.entries(features)[0][0]} className="flex-1 flex flex-col">
             <TabsList className="w-full justify-start rounded-none border-b border-slate-200 bg-transparent p-0">
               {/* <TabsTrigger
                 value="sections"
@@ -83,6 +83,7 @@ const EditPanel = () => {
                {Object.entries(features).map(([key,value])=>(
 
                   <TabsTrigger
+                  key={key}
                     value={key}
                     className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:bg-transparent"
                   >
@@ -97,7 +98,7 @@ const EditPanel = () => {
            
                {Object.entries(features).map(([key,value])=>(
 
-                    <TabsContent value={key} className="flex-1 overflow-y-auto m-0">
+                    <TabsContent value={key}  key={key}className="flex-1 overflow-y-auto m-0">
                       {value.content}
                     </TabsContent>
 

@@ -103,7 +103,7 @@ const SignupForm = ({ onToggleForm }) => {
   
     setIsLoading(true);
     try {
-       window.location.href = `${domain}api/googleAuth`
+       window.location.href = `${domain}/api/googleauthCallback`
     } finally {
       setIsLoading(false);
     }

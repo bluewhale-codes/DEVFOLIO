@@ -8,7 +8,7 @@ import About01 from "./Components/Themes/AboutSection/Theme1/About01.jsx"
 import MainLayout from './Components/Layout/MainLayout.jsx'
 import Home from './pages/Home/Home.jsx'
 import Component from './pages/DashBoard/Component.jsx'
-import Auth from './pages/Auth/Auth.jsx'
+
 import Hero from './pages/Home/Hero.jsx'
 import Project from './pages/Home/Project.jsx'
 import FeaturedProjects from './Components/Themes/ProjectsSection/Theme1/FeaturedProjects.jsx'

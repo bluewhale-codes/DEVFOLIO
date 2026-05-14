@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios';
-const domain = "https://restapis-devfolio.onrender.com/"
-
+import { domain } from '../../../index';
 export const registerUser = createAsyncThunk(
   'user/register',
   async (userData, {rejectWithValue}) => {

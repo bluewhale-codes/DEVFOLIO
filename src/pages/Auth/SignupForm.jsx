@@ -4,7 +4,7 @@ import GoogleAuthButton from './GoogleAuthButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../../store/actions/action';
 import { Input } from '../../Components/ui/input';
-
+import { domain } from '../../../index';
 const SignupForm = ({ onToggleForm }) => {
   const {loading,success,error} = useSelector((state)=>state.userAuthReducer);
 
@@ -103,7 +103,7 @@ const SignupForm = ({ onToggleForm }) => {
   
     setIsLoading(true);
     try {
-       window.location.href = "http://localhost:3000/api/googleAuth"
+       window.location.href = `${domain}api/googleAuth`
     } finally {
       setIsLoading(false);
     }

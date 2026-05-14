@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { Input } from '../../Components/ui/input';
 import { loginUser } from '../../store/actions/action';
 import { Toaster,toast } from 'sonner';
-
+import { domain } from '../../../index';
 
 const LoginForm = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({
@@ -112,7 +112,7 @@ const LoginForm = ({ onToggleForm }) => {
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {
-        window.location.href = "http://localhost:3000/api/googleAuth"
+        window.location.href = `${domain}api/googleAuth`
     } finally {
       setIsLoading(false);
     }

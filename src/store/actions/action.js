@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import axios from 'axios';
+const domain = "https://restapis-devfolio.onrender.com/"
 
 export const registerUser = createAsyncThunk(
   'user/register',
   async (userData, {rejectWithValue}) => {
      try {
-        const link = "http://localhost:3000/api/createUser"
+        const link = `${domain}/api/createUser`
 
         const config = {
           withCredentials:true,
@@ -26,7 +27,7 @@ export const loginUser = createAsyncThunk(
     'user/login',
     async(userCredential,{rejectWithValue})=>{
         try {
-            const link = "http://localhost:3000/api/login"
+            const link = `${domain}/api/login`
             const config = {
                 withCredentials:true,
                 headers:{
@@ -47,7 +48,7 @@ export const getUser = createAsyncThunk(
      "get/User",
   async (_, { rejectWithValue }) => {
     try {
-      const link = "http://localhost:3000/api/me"; // ✅ your GET endpoint
+      const link = `${domain}/api/me`; // ✅ your GET endpoint
 
       const res = await axios.get(link, {
         withCredentials: true,
@@ -66,7 +67,7 @@ export const logout = createAsyncThunk(
      "user/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const link = "http://localhost:3000/api/logout"; // ✅ your GET endpoint
+      const link = `${domain}/api/logout`; // ✅ your GET endpoint
 
       const res = await axios.post(link,{},{withCredentials:true});
 

@@ -127,7 +127,7 @@ export default function AuthPage() {
 
             
              <h1 className="text-4xl leading-tight mt-20 font-bold text-center">
-              Forget your Boring <span className="text-blue-600">Portfolio</span> Try  DEVFOLIO
+              <span className="text-blue-600">Portfolio</span> 
             </h1>
           </div>
 

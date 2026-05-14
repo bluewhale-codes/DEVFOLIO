@@ -112,7 +112,7 @@ const LoginForm = ({ onToggleForm }) => {
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {
-        window.location.href = `${domain}/api/googleauthCallback`
+        window.location.href = `${domain}/api/googleAuth`
     } finally {
       setIsLoading(false);
     }

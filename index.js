@@ -1,2 +1,2 @@
 
-export const domain = "https://restapis-devfolio.onrender.com/"
+export const domain = "https://restapis-devfolio.onrender.com"

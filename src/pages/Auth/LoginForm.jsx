@@ -101,8 +101,7 @@ const LoginForm = ({ onToggleForm }) => {
     // } catch (error) {
     //    console.log(error.message);
     // }
-     dispatch(loginUser(cred));
-    navigate("/profile");
+    dispatch(loginUser(cred));
   };
 
   const handleForgotPassword = () => {

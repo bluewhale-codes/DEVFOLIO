@@ -13,6 +13,7 @@ const SignupForm = ({ onToggleForm }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    
     password: '',
   });
   

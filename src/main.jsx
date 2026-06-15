@@ -21,15 +21,33 @@ import Test from "./Test.jsx"
 import Test2 from './Test2.jsx'
 import Preview from './pages/Preview/Preview.jsx'
 import ShadowControlPanel from './pages/DashBoard/Components/ShadowControlPanel.jsx'
+import MyPortfolio from './myPortfolio/MyPortfolio.jsx'
+import PortfolioLayout from './myPortfolio/PortfolioLayout.jsx'
+import MyHero from './myPortfolio/MyHero.jsx'
+import AboutMe from './myPortfolio/AboutMe.jsx'
+import Skills from './myPortfolio/Skills.jsx'
+import Achievements from './myPortfolio/Achievements.jsx'
+import MyProject from './myPortfolio/Project.jsx'
+import ContactSocialHub from './myPortfolio/ContactSocialHub.jsx'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
-  <>
+<>
 
       
         <Route path='/' element={<MainLayout/>}>
           <Route path='/home' element={<Home/>} />
         </Route>
+        // Route for my MyPortfolio
+        <Route path='/' element={<PortfolioLayout/>}>
+          <Route path='/hero' element={<MyHero/>} />
+          <Route path='/aboutme' element={<AboutMe/>}/>
+          <Route path='/skills' element={<Skills/>}/>
+          <Route path='/achievement' element={<Achievements/>}/>
+          <Route path='/projects' element={<MyProject/>}/>
+          <Route path='/contact' element={<ContactSocialHub/>} />
+        </Route>
+        
         <Route path='/auth' element={<AuthPage/>}/>
         <Route path='/Hero' element={<Hero/>} />
         <Route path='/project' element={<Project/>} />
@@ -38,6 +56,8 @@ const router = createBrowserRouter(createRoutesFromElements(
       <Route path='/try-component' element={<Component/>}/>
       <Route path='/preview' element={<Preview/>}/>
       <Route path='/test' element={<Test/>}/>
+      <Route path='/vishal' element={<MyPortfolio/>}/>
+
       
   </>
 ))

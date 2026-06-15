@@ -263,7 +263,7 @@ const ContactSocialHub = () => {
       </div>
 
       {/* ── THEME TOGGLE ── */}
-      <div className="fixed top-6 right-6 z-50">
+      <div className="fixed top-30 right-6 z-50">
         <button
           onClick={() => setIsDark(!isDark)}
           className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm ${

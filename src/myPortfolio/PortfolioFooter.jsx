@@ -53,7 +53,7 @@ const PortfolioFooter = () => {
   ];
 
   return (
-    <footer className="w-full bg-[#FAFAFA] border-t border-[#EAEAEA]">
+    <footer className="w-[calc(100%-2rem)] max-w-[1200px] mx-auto sm:w-[calc(100%-3rem)] lg:w-[calc(100%-4rem)] bg-[#FAFAFA] border-t border-[#EAEAEA]">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 h-[90px] flex items-center justify-between">
         
         {/* Left Section: Copyright + Dot + Brand Statement */}
@@ -62,12 +62,12 @@ const PortfolioFooter = () => {
           {/* 1. Copyright */}
           <p className="text-[13px] tracking-[-0.01em] text-[#666666] font-sans whitespace-nowrap">
             © {currentYear}{' '}
-            <span className="text-[#FF5A1F] font-medium">Vishal Shakya</span>
+            <span  className="text-[#FF5A1F] hidden sm:block font-medium">Vishal Shakya</span>
             . All rights reserved.
           </p>
 
           {/* 2. Orange Dot Separator */}
-          <div className="w-[3px] h-[3px] rounded-full bg-[#FF5A1F] flex-shrink-0" />
+          <div className="w-[3px] h-[3px] hidden sm:block rounded-full bg-[#FF5A1F] flex-shrink-0" />
 
           {/* 3. Personal Brand Statement */}
           <p className="text-[13px] tracking-[-0.01em] text-[#111111] font-medium whitespace-nowrap hidden md:block">
@@ -80,7 +80,7 @@ const PortfolioFooter = () => {
           {/* 5. CTA Section */}
           <a 
             href="mailto:vishal@example.com" 
-            className="group flex items-center gap-1.5 text-[13px] font-medium text-[#FF5A1F] hover:opacity-80 transition-opacity duration-200 whitespace-nowrap"
+            className="group hidden sm:block flex items-center gap-1.5 text-[13px] font-medium text-[#FF5A1F] hover:opacity-80 transition-opacity duration-200 whitespace-nowrap"
           >
             Let's Build Something Great
             <ArrowUpRight 

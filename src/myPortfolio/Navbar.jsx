@@ -257,12 +257,12 @@ const MobileNavDrawer = ({ isOpen, onClose, activeLink, onLinkClick }) => {
     <>
       <div 
         ref={overlayRef}
-        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity dark:bg-black/40 ${isOpen ? "pointer-events-auto" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0  cursor-pointer bg-black/20 backdrop-blur-sm transition-opacity dark:bg-black/40 ${isOpen ? "pointer-events-auto" : "pointer-events-none opacity-0"}`}
         onClick={onClose}
       />
       <div 
         ref={drawerRef}
-        className="fixed right-0 top-0 z-50 h-full w-[280px] bg-white shadow-2xl dark:bg-[#1a1a1a]"
+        className="fixed right-0 top-0 z-100 h-full w-[280px] bg-white shadow-2xl dark:bg-[#1a1a1a]"
         style={{ transform: "translateX(100%)" }}
       >
         <div className="flex items-center justify-between border-b border-[#EAEAEA] p-4 dark:border-[#2a2a2a]">
@@ -276,14 +276,14 @@ const MobileNavDrawer = ({ isOpen, onClose, activeLink, onLinkClick }) => {
             const Icon = item.icon;
             const isActive = activeLink === item.href;
             return (
-              <a
+              <Link
                 key={item.label}
-               
+                to={item.href}
                 onClick={() => {
                   onLinkClick(item.href);
                   onClose();
                 }}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 ${
+                className={`flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 ${
                   isActive
                     ? "bg-[#FFD233]/15 text-[#111111] dark:bg-[#FFD233]/20 dark:text-white"
                     : "text-[#666666] hover:bg-[#F7F7F5] dark:text-[#999] dark:hover:bg-[#2a2a2a]"
@@ -291,7 +291,7 @@ const MobileNavDrawer = ({ isOpen, onClose, activeLink, onLinkClick }) => {
               >
                 <Icon className={`h-5 w-5 ${isActive ? "text-[#FFD233]" : ""}`} />
                 <span className="text-sm font-medium">{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </div>

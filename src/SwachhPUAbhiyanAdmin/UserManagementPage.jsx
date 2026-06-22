@@ -463,10 +463,25 @@ const getRoleIcon = (role) => {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// REUSABLE COMPONENTS
+// NEW: LOADER COMPONENT — Professional spinner overlay
+// Shows a centered spinning ring with "Loading..." text.
+// Uses existing color palette (#2563EB) to match the design.
 // ═══════════════════════════════════════════════════════════════
+const PageLoader = () => (
+  <div className="fixed inset-0 bg-[#F8FAFC]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+    <div className="relative">
+      <div className="w-14 h-14 rounded-full border-[3px] border-slate-200 border-t-[#2563EB] animate-spin" />
+    </div>
+    <p className="mt-4 text-sm font-medium text-slate-500">Loading...</p>
+  </div>
+);
 
+// ═══════════════════════════════════════════════════════════════
+// SIDEBAR COMPONENT — Updated with admin info & logout
+// ═══════════════════════════════════════════════════════════════
 const Sidebar = ({ activeItem, mobileOpen, onClose }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { label: "Tasks", icon: ClipboardList, path: "/tasks" },
@@ -476,6 +491,63 @@ const Sidebar = ({ activeItem, mobileOpen, onClose }) => {
     { label: "Analytics", icon: BarChart3, path: "/analytics" },
     { label: "Settings", icon: Settings, path: "/settings" },
   ];
+
+  // ═══════════════════════════════════════════════════════════
+  // NEW: Read admin information from localStorage safely.
+  // Wrapped in try/catch to handle invalid JSON.
+  // Uses optional chaining (?.) with fallbacks for missing fields.
+  // Returns null if localStorage is empty or data is corrupt.
+  // ═══════════════════════════════════════════════════════════
+  const adminUser = useMemo(() => {
+    try {
+      const raw = localStorage.getItem("user");
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Safely extract name and email with fallback defaults
+  const adminName = adminUser?.name || adminUser?.username || "Admin User";
+  const adminEmail = adminUser?.email || "admin@pu.edu.in";
+  const adminInitials = getInitials(adminName);
+
+  // ═══════════════════════════════════════════════════════════
+  // NEW: Logout handler — fully functional and secure.
+  // Steps:
+  //   A. Remove localStorage auth data (safe even if keys don't exist)
+  //   B. Clear authentication cookies by setting expired date
+  //   C. Navigate to /admin/login via React Router
+  // Wrapped in try/catch so redirect always happens (finally block).
+  // ═══════════════════════════════════════════════════════════
+  const handleLogout = () => {
+    try {
+      // A. Remove localStorage items — removeItem() never throws if key missing
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+
+      // B. Clear authentication cookies reliably.
+      // We expire cookies on multiple paths ("/" and "/admin")
+      // and both plain + Secure variants to ensure complete cleanup.
+      const cookieNames = ["access_token", "refresh_token"];
+      const paths = ["/", "/admin"];
+      cookieNames.forEach((name) => {
+        paths.forEach((path) => {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path};`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path}; Secure;`;
+        });
+      });
+    } catch (err) {
+      // Graceful failure: log but never block navigation
+      console.error("Logout cleanup failed:", err);
+    } finally {
+      // C. Always redirect to login, even if cleanup partially failed.
+      // This ensures the user is never stuck on a broken logout.
+      navigate("/admin/login");
+    }
+  };
 
   return (
     <>
@@ -521,18 +593,24 @@ const Sidebar = ({ activeItem, mobileOpen, onClose }) => {
           })}
         </nav>
 
-        {/* Bottom */}
+        {/* Bottom — Updated with dynamic admin info & functional logout */}
         <div className="px-4 py-4 border-t border-slate-700/50 space-y-3">
           <div className="flex items-center gap-3 px-2">
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-violet-600 flex items-center justify-center text-white text-xs font-bold">
-              AD
+              {adminInitials}
             </div>
             <div className="min-w-0">
-              <p className="text-white text-sm font-medium truncate">Admin User</p>
-              <p className="text-xs text-slate-400 truncate">admin@pu.edu.in</p>
+              {/* NEW: Display admin name from localStorage with safe fallback */}
+              <p className="text-white text-sm font-medium truncate">{adminName}</p>
+              {/* NEW: Display admin email from localStorage with safe fallback */}
+              <p className="text-xs text-slate-400 truncate">{adminEmail}</p>
             </div>
           </div>
-          <button className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors">
+          {/* NEW: Logout button now has onClick={handleLogout} for full functionality */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+          >
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -609,9 +687,6 @@ const UserListPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-
-
-
   const fetchProfiles = async () => {
     try {
       setLoading(true);
@@ -659,7 +734,7 @@ const UserListPage = () => {
       const matchesRole = roleFilter === "All Roles" || user.role?.toLowerCase() === roleFilter.toLowerCase();
       return matchesSearch && matchesRole;
     });
-  }, [searchQuery, roleFilter]);
+  }, [searchQuery, roleFilter, profiles]);
 
   const stats = {
     total: profiles.length,
@@ -668,12 +743,23 @@ const UserListPage = () => {
     admins: profiles.filter((u) => u.role === "admin").length,
   };
 
-  return (
-    
-    <>
-     {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+  // ═══════════════════════════════════════════════════════════
+  // NEW: Show professional loader while fetching API data.
+  // The sidebar remains visible so navigation isn't blocked.
+  // Main content is hidden until data is loaded.
+  // ═══════════════════════════════════════════════════════════
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex">
+        <Sidebar activeItem="Users / Profiles" mobileOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
+        <main className="flex-1 min-w-0 flex flex-col relative">
+          <PageLoader />
+        </main>
+      </div>
+    );
+  }
 
+  return (
     <div className="min-h-screen bg-[#F8FAFC] flex">
       <Sidebar activeItem="Users / Profiles" mobileOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
 
@@ -807,7 +893,7 @@ const UserListPage = () => {
           </div>
         </div>
       </main>
-    </div></>
+    </div>
   );
 };
 
@@ -824,12 +910,44 @@ const ProfileDetailPage = () => {
   const user = useMemo(() => profilesData.find((p) => p.id === id), [id]);
   const reports = reportsByUser[id] || [];
 
+  // ═══════════════════════════════════════════════════════════
+  // NEW: Loading state for ProfileDetailPage.
+  // Initialized to true so the loader shows immediately on mount.
+  // Simulates a data fetch; replace the setTimeout with your real API call.
+  // When loading is true, the PageLoader overlay is shown and main content is hidden.
+  // ═══════════════════════════════════════════════════════════
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800); // Simulate 800ms API load; adjust or remove as needed
+    return () => clearTimeout(timer);
+  }, [id]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (pageRef.current) {
+    if (pageRef.current && !loading) {
       gsap.fromTo(pageRef.current.querySelectorAll(".animate-in"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.06, ease: "power2.out" });
     }
-  }, [id]);
+  }, [id, loading]);
+
+  // ═══════════════════════════════════════════════════════════
+  // NEW: Show professional loader while loading === true.
+  // The sidebar remains visible so navigation isn't blocked.
+  // Main content area shows only the PageLoader overlay.
+  // ═══════════════════════════════════════════════════════════
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex">
+        <Sidebar activeItem="Users / Profiles" mobileOpen={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
+        <main className="flex-1 min-w-0 flex flex-col relative">
+          <PageLoader />
+        </main>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -1076,11 +1194,10 @@ const ProfileDetailPage = () => {
 
 const UserManagementPage = () => {
   return (
-    // <Routes>
-    //   <Route path="/" element={<UserListPage />} />
-    //   <Route path="/:id" element={<ProfileDetailPage />} />
-    // </Routes>
-    <UserListPage/>
+    <Routes>
+      <Route path="/" element={<UserListPage />} />
+      <Route path="/:id" element={<ProfileDetailPage />} />
+    </Routes>
   );
 };
 

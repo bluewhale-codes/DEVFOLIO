@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router';
+import axios from 'axios';
 import {
   ArrowLeft,
   ClipboardList,
@@ -32,7 +33,13 @@ import {
   ExternalLink,
   Download,
   Maximize2,
-  Loader2
+  Loader2,
+  Search,
+  X,
+  Phone,
+  MapPinned,
+  Briefcase,
+  UserCircle
 } from 'lucide-react';
 
 /* ───────────────────────────────────────────────
@@ -456,6 +463,31 @@ const PhotoPreview = ({ photoUrl, description }) => {
 };
 
 /* ───────────────────────────────────────────────
+   TOAST COMPONENT
+   ─────────────────────────────────────────────── */
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+  const icon = type === 'success' ? <CheckCircle size={18} /> : type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />;
+
+  return (
+    <div className="fixed top-20 right-4 z-[100] animate-in slide-in-from-right fade-in duration-300">
+      <div className={`${bgColor} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 min-w-[300px]`}>
+        {icon}
+        <span className="text-sm font-medium">{message}</span>
+        <button onClick={onClose} className="ml-auto hover:opacity-80">
+          <X size={16} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ───────────────────────────────────────────────
    MAIN DETAIL PAGE COMPONENT
    ─────────────────────────────────────────────── */
 const TaskDetailPage = ({ onBack }) => {
@@ -465,8 +497,15 @@ const TaskDetailPage = ({ onBack }) => {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState('');
   const [showAssignModal, setShowAssignModal] = useState(false);
+  
+  // Worker assignment states
+  const [workers, setWorkers] = useState([]);
+  const [loadingWorkers, setLoadingWorkers] = useState(false);
+  const [assigningWorkerId, setAssigningWorkerId] = useState(null);
+  const [workerSearch, setWorkerSearch] = useState('');
+  const [toast, setToast] = useState(null);
 
-  // Fetch tasks from API and filter by ID from params
+  // Fetch task from API
   useEffect(() => {
     const fetchTask = async () => {
       setLoading(true);
@@ -497,6 +536,111 @@ const TaskDetailPage = ({ onBack }) => {
       fetchTask();
     }
   }, [id]);
+
+  // Fetch workers from API
+  const fetchWorkers = async () => {
+    setLoadingWorkers(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Unauthorized - No access token found');
+      }
+
+      const response = await axios.get(
+        'https://swachh-pu-backend.onrender.com/profiles/workers',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const workersList = response.data?.profiles || [];
+      setWorkers(workersList);
+    } catch (err) {
+      const errorMsg = err.response?.status === 401 
+        ? 'Unauthorized - Please login again' 
+        : err.response?.status === 404 
+          ? 'No workers available' 
+          : 'Failed to load workers';
+      setToast({ message: errorMsg, type: 'error' });
+      setWorkers([]);
+    } finally {
+      setLoadingWorkers(false);
+    }
+  };
+
+  // Open assign modal
+  const openAssignModal = () => {
+    setShowAssignModal(true);
+    setWorkerSearch('');
+    fetchWorkers();
+  };
+
+  // Close assign modal
+  const closeAssignModal = () => {
+    setShowAssignModal(false);
+    setWorkers([]);
+    setWorkerSearch('');
+    setAssigningWorkerId(null);
+  };
+
+  // Handle assign worker
+  const handleAssignWorker = async (worker) => {
+    if (!task?.id || !worker?.id) return;
+    
+    setAssigningWorkerId(worker.id);
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        throw new Error('Unauthorized - No access token found');
+      }
+
+      await axios.patch(
+        `https://swachh-pu-backend.onrender.com/tasks/${task.id}/assign`,
+        {
+          worker_profile_id: worker.id
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update task state immediately
+      setTask(prev => ({
+        ...prev,
+        assigned_to: worker.id,
+        assignee_name: worker.full_name || worker.name || 'Worker',
+        status: 'assigned'
+      }));
+      setStatus('assigned');
+
+      setToast({ message: 'Task assigned successfully', type: 'success' });
+      closeAssignModal();
+    } catch (err) {
+      const errorMsg = err.response?.status === 401 
+        ? 'Unauthorized - Please login again' 
+        : err.response?.status === 404 
+          ? 'Task or worker not found' 
+          : err.response?.data?.message || 'Failed to assign worker';
+      setToast({ message: errorMsg, type: 'error' });
+    } finally {
+      setAssigningWorkerId(null);
+    }
+  };
+
+  // Filter workers based on search
+  const filteredWorkers = workers.filter(worker => {
+    const searchTerm = workerSearch.toLowerCase();
+    return (
+      (worker.full_name || worker.name || '').toLowerCase().includes(searchTerm) ||
+      (worker.phone || '').toLowerCase().includes(searchTerm) ||
+      (worker.zone || '').toLowerCase().includes(searchTerm) ||
+      (worker.employee_id || '').toLowerCase().includes(searchTerm)
+    );
+  });
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
@@ -566,6 +710,141 @@ const TaskDetailPage = ({ onBack }) => {
     <div className="min-h-screen bg-[#F8FAFC]">
       <TopNavigation />
 
+      {/* Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
+
+      {/* Worker Assignment Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={closeAssignModal}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Assign Worker</h2>
+                <p className="text-sm text-gray-500 mt-0.5">Select a worker to assign this task</p>
+              </div>
+              <button
+                onClick={closeAssignModal}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="px-6 py-4 border-b border-gray-100">
+              <div className="relative">
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search worker by name, zone or phone..."
+                  value={workerSearch}
+                  onChange={(e) => setWorkerSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Workers List */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {loadingWorkers ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Loader2 size={32} className="text-[#2563EB] animate-spin mb-3" />
+                  <p className="text-sm text-gray-500">Loading workers...</p>
+                </div>
+              ) : filteredWorkers.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <UserCircle size={48} className="text-gray-300 mb-3" />
+                  <p className="text-sm font-medium text-gray-500">No workers available</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {workerSearch ? 'Try adjusting your search' : 'No workers found in the system'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredWorkers.map((worker) => (
+                    <div
+                      key={worker.id}
+                      className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all p-4"
+                    >
+                      <div className="flex items-start gap-4">
+                        {/* Avatar */}
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-white shadow-sm flex items-center justify-center flex-shrink-0">
+                          <span className="text-sm font-semibold text-[#2563EB]">
+                            {(worker.full_name || worker.name || 'W').charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        
+                        {/* Worker Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h3 className="text-sm font-semibold text-gray-900">
+                                {worker.full_name || worker.name || 'Unknown Worker'}
+                              </h3>
+                              <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100">
+                                <Briefcase size={10} />
+                                Worker
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => handleAssignWorker(worker)}
+                              disabled={assigningWorkerId === worker.id}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB] hover:bg-blue-700 disabled:bg-blue-300 text-white text-xs font-medium rounded-lg transition-colors shadow-sm shadow-blue-500/20 flex-shrink-0"
+                            >
+                              {assigningWorkerId === worker.id ? (
+                                <>
+                                  <Loader2 size={12} className="animate-spin" />
+                                  Assigning...
+                                </>
+                              ) : (
+                                <>
+                                  <UserCheck size={12} />
+                                  Assign Worker
+                                </>
+                              )}
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 mt-3">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                              <Phone size={12} className="text-gray-400" />
+                              <span>{worker.phone || '—'}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                              <MapPinned size={12} className="text-gray-400" />
+                              <span>{worker.zone || '—'}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                              <Briefcase size={12} className="text-gray-400" />
+                              <span>ID: {worker.employee_id || '—'}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                              <UserCircle size={12} className="text-gray-400" />
+                              <span className="font-mono">{shortenId(worker.id)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button & Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -590,7 +869,7 @@ const TaskDetailPage = ({ onBack }) => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={() => setShowAssignModal(true)}
+              onClick={openAssignModal}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm shadow-blue-500/20"
             >
               <UserCheck size={16} />
@@ -767,23 +1046,46 @@ const TaskDetailPage = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Assigned Worker */}
+            {/* Assigned Worker - UPDATED */}
             <div className="bg-white rounded-xl border border-gray-200/80 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+              <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Assigned Worker</h2>
+                {task.assigned_to && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100">
+                    <UserCheck size={10} />
+                    Active
+                  </span>
+                )}
               </div>
               <div className="p-6">
                 {task.assigned_to ? (
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-white shadow-sm flex items-center justify-center">
                       <UserCheck size={24} className="text-[#2563EB]" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900">
                         {task.assignee_name || 'Worker'}
                       </p>
-                      <p className="text-xs text-gray-500 font-mono mt-0.5">{task.assigned_to}</p>
-                      <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100">
+                      <div className="grid grid-cols-1 gap-1.5 mt-2">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Phone size={12} className="text-gray-400" />
+                          <span>{task.assignee_phone || '—'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <MapPinned size={12} className="text-gray-400" />
+                          <span>{task.assignee_zone || '—'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <Briefcase size={12} className="text-gray-400" />
+                          <span>ID: {task.assignee_employee_id || '—'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <UserCircle size={12} className="text-gray-400" />
+                          <span className="font-mono">{task.assigned_to}</span>
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-medium border border-blue-100">
                         <UserCheck size={10} />
                         Currently Assigned
                       </span>
@@ -797,6 +1099,13 @@ const TaskDetailPage = ({ onBack }) => {
                     <div>
                       <p className="text-sm font-medium text-gray-500">No worker assigned</p>
                       <p className="text-xs text-gray-400 mt-0.5">Assign a worker to this task</p>
+                      <button
+                        onClick={openAssignModal}
+                        className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <UserCheck size={12} />
+                        Assign Now
+                      </button>
                     </div>
                   </div>
                 )}

@@ -33,6 +33,7 @@ import UserManagementPage from './SwachhPUAbhiyanAdmin/UserManagementPage.jsx'
 import ProfileDetailPage from './SwachhPUAbhiyanAdmin/ProfileDetailPage.jsx'
 import TaskManagementPage from './SwachhPUAbhiyanAdmin/TaskManagementPage.jsx'
 import TaskDetailPage from './SwachhPUAbhiyanAdmin/TaskDetailPage.jsx'
+import AdminLoginPage from './SwachhPUAbhiyanAdmin/AdminLoginPage.jsx'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -65,6 +66,7 @@ const router = createBrowserRouter(createRoutesFromElements(
       <Route path="/users/:id" element={<ProfileDetailPage/>}/>
       <Route path="/tasks" element={<TaskManagementPage/>}/>
       <Route path="/tasks/detail/:id" element={<TaskDetailPage onBack={() => navigate(-1)}/>}/>
+      <Route path="/admin/login" element={<AdminLoginPage/>}/>
 
 
       

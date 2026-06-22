@@ -29,6 +29,10 @@ import Skills from './myPortfolio/Skills.jsx'
 import Achievements from './myPortfolio/Achievements.jsx'
 import MyProject from './myPortfolio/Project.jsx'
 import ContactSocialHub from './myPortfolio/ContactSocialHub.jsx'
+import UserManagementPage from './SwachhPUAbhiyanAdmin/UserManagementPage.jsx'
+import ProfileDetailPage from './SwachhPUAbhiyanAdmin/ProfileDetailPage.jsx'
+import TaskManagementPage from './SwachhPUAbhiyanAdmin/TaskManagementPage.jsx'
+import TaskDetailPage from './SwachhPUAbhiyanAdmin/TaskDetailPage.jsx'
 
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -57,6 +61,11 @@ const router = createBrowserRouter(createRoutesFromElements(
       <Route path='/preview' element={<Preview/>}/>
       <Route path='/test' element={<Test/>}/>
       <Route path='/vishal' element={<MyPortfolio/>}/>
+      <Route path='/admin' element={<UserManagementPage/>}/>
+      <Route path="/users/:id" element={<ProfileDetailPage/>}/>
+      <Route path="/tasks" element={<TaskManagementPage/>}/>
+      <Route path="/tasks/detail/:id" element={<TaskDetailPage onBack={() => navigate(-1)}/>}/>
+
 
       
   </>
